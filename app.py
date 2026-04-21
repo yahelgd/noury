@@ -1,14 +1,24 @@
 import streamlit as st
 
-# --- CONFIGURATION DE LA PAGE (Ligne 8 corrigée) ---
+# --- CONFIGURATION DE LA PAGE ---
 st.set_page_config(page_title="Pour Nour ❤️", page_icon="✨", layout="centered")
 
-# --- STYLE PERSONNALISÉ ---
+# --- STYLE PERSONNALISÉ (CORRIGÉ) ---
 st.markdown("""
     <style>
     .main { background-color: #fff9fb; }
-    .stButton>button { border-radius: 30px; border: 1px solid #ff4b4b; background-color: white; color: #ff4b4b; font-weight: bold; }
-    .stButton>button:hover { background-color: #ff4b4b; color: white; }
+    .stButton>button { 
+        border-radius: 30px; 
+        border: 1px solid #ff4b4b; 
+        background-color: white; 
+        color: #ff4b4b; 
+        font-weight: bold; 
+        width: 100%;
+    }
+    .stButton>button:hover { 
+        background-color: #ff4b4b; 
+        color: white; 
+    }
     .poeme { 
         font-style: italic; 
         text-align: center; 
@@ -23,7 +33,7 @@ st.markdown("""
         justify-content: center;
     }
     </style>
-    """, unsafe_allow_index=True)
+    """, unsafe_allow_html=True)
 
 # Initialisation des variables de session
 if 'connecte' not in st.session_state:
@@ -31,7 +41,7 @@ if 'connecte' not in st.session_state:
 if 'diapo_index' not in st.session_state:
     st.session_state['diapo_index'] = 0
 
-# --- STRUCTURE DES 3 DIAPOS ---
+# --- STRUCTURE DES 3 DIAPOS (TES PAROLES) ---
 diapos = [
     {
         "image": "photo1.jpg", 
@@ -49,13 +59,13 @@ diapos = [
 
 # --- ECRAN D'ACCÈS (AUTHENTIFICATION) ---
 if not st.session_state['connecte']:
-    st.markdown("<h2 style='text-align: center; color: #ff4b4b;'>🔐 Accès réservé</h2>", unsafe_allow_index=True)
+    st.markdown("<h2 style='text-align: center; color: #ff4b4b;'>🔐 Accès réservé</h2>", unsafe_allow_html=True)
     st.write("")
     
     col_l1, col_l2, col_l3 = st.columns([1, 2, 1])
     with col_l2:
-        reponse = st.text_input("C'est quoi le prénom de mon colloc ?", placeholder="Ton texte ici...")
-        valider = st.button("Valider l'accès", use_container_width=True)
+        reponse = st.text_input("C'est quoi le prénom de mon colloc ?", placeholder="Tape ici...")
+        valider = st.button("Valider l'accès")
 
     if valider:
         if reponse.strip().lower() == "youssef":
@@ -63,44 +73,23 @@ if not st.session_state['connecte']:
             st.balloons()
             st.rerun()
         else:
-            st.error("Mauvaise réponse... Réessaie mon cœur. ❌")
+            st.error("Ce n'est pas la bonne réponse... Réessaie mon cœur. ❌")
 
-# --- ESPACE NOUR (UNE FOIS CONNECTÉ) ---
+# --- ESPACE NOUR ---
 else:
-    st.markdown("<h1 style='text-align: center;'>Bonjour Nour ❤️</h1>", unsafe_allow_index=True)
+    st.markdown("<h1 style='text-align: center;'>Bonjour Nour ❤️</h1>", unsafe_allow_html=True)
     
     index = st.session_state['diapo_index']
     current = diapos[index]
     
     # Affichage de la photo
     try:
-        # Note : use_container_width remplace use_column_width dans les versions récentes
         st.image(current["image"], use_container_width=True)
     except:
-        st.info(f"📸 (L'image '{current['image']}' doit être dans le dossier sur GitHub)")
+        st.info(f"📸 (L'image '{current['image']}' est manquante sur GitHub)")
     
     # Texte poétique
-    st.markdown(f'<p class="poeme">"{current["legende"]}"</p>', unsafe_allow_index=True)
+    st.markdown(f'<p class="poeme">"{current["legende"]}"</p>', unsafe_allow_html=True)
     
     st.write("---")
-    
-    # Navigation entre les diapos
-    c1, c2, c3 = st.columns([2, 1, 2])
-    with c1:
-        if st.button("⬅️ Précédent", disabled=(index == 0), use_container_width=True):
-            st.session_state['diapo_index'] -= 1
-            st.rerun()
-    with c2:
-        st.markdown(f"<p style='text-align:center; font-weight:bold;'>{index + 1} / 3</p>", unsafe_allow_index=True)
-    with c3:
-        if st.button("Suivant ➡️", disabled=(index == len(diapos) - 1), use_container_width=True):
-            st.session_state['diapo_index'] += 1
-            st.rerun()
-
-    # Petit bouton discret en bas pour se déconnecter
-    st.write("")
-    if st.sidebar.button("Se déconnecter"):
-        st.session_state['connecte'] = False
-        st.session_state['diapo_index'] = 0
-        st.rerun()
 
